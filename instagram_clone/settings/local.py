@@ -3,7 +3,10 @@ from .base import *
 from .env import env
 
 INSTALLED_APPS += [
-    'rest_framework'
+    'rest_framework',
+    'authentication_app.apps.AuthenticationAppConfig',
+    'post_management_app.apps.PostManagementAppConfig',
+    'user_management_app.apps.UserManagementAppConfig',
 ]
 
 DEBUG = env.bool('DJANGO_DEBUG', default=True)
