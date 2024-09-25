@@ -4,6 +4,8 @@ from .env import env
 
 INSTALLED_APPS += [
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_authtoken',
     'authentication_app.apps.AuthenticationAppConfig',
     'post_management_app.apps.PostManagementAppConfig',
     'user_management_app.apps.UserManagementAppConfig',
@@ -25,4 +27,10 @@ DATABASES = {
         'USER': env('DB_USER'),
         'PASSWORD': env('DB_PASSWORD'),
     }
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
 }
