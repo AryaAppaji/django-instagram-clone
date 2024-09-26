@@ -4,6 +4,9 @@ from .env import env
 
 INSTALLED_APPS += [
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_authtoken',
+    'drf_spectacular',
     'authentication_app.apps.AuthenticationAppConfig',
     'post_management_app.apps.PostManagementAppConfig',
     'user_management_app.apps.UserManagementAppConfig',
@@ -26,3 +29,12 @@ DATABASES = {
         'PASSWORD': env('DB_PASSWORD'),
     }
 }
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
