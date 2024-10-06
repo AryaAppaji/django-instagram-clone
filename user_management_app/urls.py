@@ -9,14 +9,14 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 
-router.register(r'user', UserViewSet, basename='user')
-router.register(r'profile', ProfileViewSet, basename='profile')
-router.register(r'chat', ChatViewSet, basename='chat')
-router.register(r'message', MessageViewSet, basename='message')
-router.register(r'story', StoryViewSet, basename='story')
-router.register(r'follower', FollowerViewSet, basename='follower')
+router.register(r"user", UserViewSet, basename="user")
+router.register(r"profile", ProfileViewSet, basename="profile")
+router.register(r"chat", ChatViewSet, basename="chat")
+router.register(r"message", MessageViewSet, basename="message")
+router.register(r"story", StoryViewSet, basename="story")
+router.register(r"follower", FollowerViewSet, basename="follower")
 
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path("", include(router.urls)),
 ]

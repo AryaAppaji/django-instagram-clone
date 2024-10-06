@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from ..models import (Chat, Follower, Message, Profile, Story)
+from ..models import Chat, Follower, Message, Profile, Story
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -12,15 +12,16 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = '__all__'
+        fields = "__all__"
 
 
 class FollowerSerializer(serializers.ModelSerializer):
     follower = UserSerializer(read_only=True)
     user = UserSerializer(read_only=True)
+
     class Meta:
         model = Follower
-        fields  = '__all__'
+        fields = "__all__"
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -34,10 +35,10 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = '__all__'
+        fields = "__all__"
 
     def get_picture_url(self, obj):
-        request = self.context.get('request')
+        request = self.context.get("request")
         if obj.picture:
             # Use the request to get the full domain and build the complete URL
             return request.build_absolute_uri(obj.picture.url)
@@ -47,20 +48,23 @@ class ProfileSerializer(serializers.ModelSerializer):
 class StorySerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     attachement_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Story
-        fields = '__all__'
-    
+        fields = "__all__"
+
     def get_attachement_url(self, obj):
-        request = self.context.get('request')
+        request = self.context.get("request")
         if obj.attachement:
             return request.get_absolute_uri(obj.attachement.url)
         return None
 
+
 class ChatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chat
-        fields = '__all__'
+        fields = "__all__"
+
 
 class MessageSerializer(serializers.ModelSerializer):
     chat = ChatSerializer(read_only=True)
@@ -68,16 +72,17 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = '__all__'
+        fields = "__all__"
 
     def validate(self, data):
-        if not data.get('message') and not data.get('attachement'):
-            raise serializers.ValidationError("Either message or attachment must be provided.")
+        if not data.get("message") and not data.get("attachement"):
+            raise serializers.ValidationError(
+                "Either message or attachment must be provided."
+            )
         return data
-    
+
     def get_attachement_url(self, obj):
-        request = self.context.get('request')
+        request = self.context.get("request")
         if obj.attachement:
             return request.get_absolute_uri(obj.attachement.url)
         return None
-
