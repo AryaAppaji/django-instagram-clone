@@ -20,12 +20,18 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-     # Schema JSON
+    
+    # For Request Monitoring.
+    path('silk/', include('silk.urls')),
+    
+    # Schema JSON
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     # Swagger UI
     path('api/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     # ReDoc UI
     path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
-    path('api/auth/', include('authentication_app.urls')),  # Include app-level URLs
+    path('api/auth/', include('authentication_app.urls')),
+    
+    path('api/user-management/', include('user_management_app.urls')),
 ]

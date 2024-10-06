@@ -14,7 +14,7 @@ class AuthViewSet(ViewSet):
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def loginUser(self, request):
         user = authenticate(username=request.data.get('user_name'), password=request.data.get('password'))
-        
+        print(user)
         if user is not None:
 
             # Delete existing tokens for the user
