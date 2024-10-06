@@ -1,4 +1,3 @@
-from .serializers import MessageSerializer
 from ..models import Message, User, Chat
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
