@@ -3,7 +3,7 @@ venv/
 instagram_clone/__pycache__/
 instagram_clone/settings/__pycache__/
 user_management_app/__pycache__/
-#user_management_app/user_management_views/__pycache__/
+user_management_app/user_management_views/__pycache__/
 user_management_app/migrations/__pycache__/
 post_management_app/__pycache__/
 post_management_app/migrations/__pycache__/
