@@ -1,59 +1,52 @@
-from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.decorators import api_view, permission_classes
 from .serializers import UserSerializer
+from django.contrib.auth import authenticate
+from datetime import timedelta
+from django.utils import timezone
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework import status
+from rest_framework_api_key.models import APIKey
+from rest_framework_api_key.permissions import HasAPIKey
 
 
-@api_view(http_method_names=["POST"])
-@permission_classes([AllowAny])
-# Create your views here.
+@api_view(['POST'])
 def loginUser(request):
-    user = authenticate(
-        username=request.data.get("user_name"),
-        password=request.data.get("password"),
-    )
-    print(user)
+    username = request.data.get('user_name')
+    password = request.data.get('password')
+
+    # Authenticate user
+    user = authenticate(username=username, password=password)
     if user is not None:
-        # Delete existing tokens for the user
-        Token.objects.filter(user=user).delete()
-        # Create a new token
-        token, created = Token.objects.get_or_create(user=user)
-        return Response(
-            {
-                "user": UserSerializer(user).data,
-                "token": token.key,
-                "msg": "User logged in successfully",
-                "status": True,
-            },
-            status=status.HTTP_200_OK,
-        )
+        # Delete any existing API keys for the user
+        APIKey.objects.filter(name=user.username).delete()  # Ensure user has no old keys
+        
+        # Create a new API key for the user with an expiry date
+        expiration_time = timezone.now() + timedelta(days=1)  # 1 day validity
+        api_key, key = APIKey.objects.create_key(name=user.username, expiry_date=expiration_time)
 
-    return Response(
-        {
-            "status": False,
-            "msg": "Invalid credentials",
-        },
-        status=status.HTTP_401_UNAUTHORIZED,
-    )
+        return Response({
+            'user': UserSerializer(user).data,  # Return the username instead of the user object
+            'api_key': key,
+            'status': True
+        }, status=status.HTTP_200_OK)
+    else:
+        return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(http_method_names=["POST"])
-@permission_classes([IsAuthenticated])
+@api_view(['POST'])
+@permission_classes([HasAPIKey])
 def logoutUser(request):
+    # Get API key from Authorization header
+    api_key_header = request.headers.get('Authorization')
+
+    if not api_key_header:
+        return Response({'error': 'API key required'}, status=status.HTTP_400_BAD_REQUEST)
+
     try:
-        # Get the token from the request headers
-        token = request.auth
-        if token:
-            token.delete()
-            return Response(
-                {"msg": "User logged out successfully", "status": True},
-                status=status.HTTP_200_OK,
-            )
-    except Token.DoesNotExist:
-        return Response(
-            {"msg": "No active session found", "status": False},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        # Extract API key from the Authorization header
+        api_key = api_key_header.split(' ')[1]  # Expects format like "Api-Key YOUR_API_KEY"
+        api_key_obj = APIKey.objects.get_from_key(api_key)
+        api_key_obj.delete()  # Invalidate the API key
+        return Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)
+    except (APIKey.DoesNotExist, IndexError):
+        return Response({'error': 'Invalid or missing API key'}, status=status.HTTP_400_BAD_REQUEST)

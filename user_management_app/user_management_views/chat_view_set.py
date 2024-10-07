@@ -1,13 +1,13 @@
 from .serializers import ChatSerializer
 from ..models import Chat
-from rest_framework.permissions import IsAuthenticated
+from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from rest_framework import status
 
 
 class ChatViewSet(ViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [HasAPIKey]
 
     def list(self, request):
         user = request.user

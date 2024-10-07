@@ -5,9 +5,7 @@ import os
 
 INSTALLED_APPS += [
     "rest_framework",
-    "rest_framework.authtoken",
-    "rest_authtoken",
-    "storages",
+    "rest_framework_api_key",
     "drf_spectacular",
     "silk",
     "authentication_app.apps.AuthenticationAppConfig",

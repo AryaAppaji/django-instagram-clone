@@ -1,5 +1,5 @@
 from ..models import Message, User, Chat
-from rest_framework.permissions import IsAuthenticated
+from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from rest_framework import status
@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 
 
 class MessageViewSet(ViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [HasAPIKey]
 
     def list(self, request):
         chat_id = request.data.get("chat_id")
