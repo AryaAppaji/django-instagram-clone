@@ -21,6 +21,8 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
     SpectacularRedocView,
 )
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path, include
 
 urlpatterns = [
@@ -40,3 +42,6 @@ urlpatterns = [
     path("api/auth/", include("authentication_app.urls")),
     path("api/user-management/", include("user_management_app.urls")),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
